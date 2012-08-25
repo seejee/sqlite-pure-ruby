@@ -39,18 +39,14 @@ module PureSQLite
       def find_usable_bytes(stream)
         usable = []
 
-        (0..8).each do |counter|
+        (0..8).each do |count|
           byte = stream.readbyte
           usable << byte
 
-          break if ninth?(counter) || starts_with_zero?(byte)
+          break if ninth?(count) || starts_with_zero?(byte)
         end
 
         usable
-      end
-
-      def ninth?(index)
-        index == 8
       end
 
       IS_FIRST_BIT_ZERO_MASK = 0b10000000
@@ -62,6 +58,10 @@ module PureSQLite
 
       def usable_value(usable_size, byte)
         usable_size == 7 ? byte & LAST_SEVEN_BITS_MASK : byte
+      end
+
+      def ninth?(index)
+        index == 8
       end
 
     end
