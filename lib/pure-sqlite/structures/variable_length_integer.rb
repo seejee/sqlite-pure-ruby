@@ -5,42 +5,54 @@ module PureSQLite
     class VariableLengthInteger
 
       def initialize(stream)
-        @result = parse(stream)
+        parse(stream)
       end
 
       def length
-        @result[:length]
+        @length 
       end
 
       def value
-        @result[:value]
+        @value 
       end
 
       private
 
-      IS_FIRST_BIT_ZERO_MASK = 0b10000000
-      LAST_SEVEN_BITS_MASK    = 0b01111111
-
       def parse(stream)
-        value = 0
+        usable_bytes = find_usable_bytes(stream)
+
+        @length = usable_bytes.length
+        @value = compute_value(usable_bytes)
+      end
+
+      def compute_value(usable_bytes)
+        value = usable_bytes.each_with_index.inject(0) do |value, (byte, index)|
+          is_ninth_byte = index == 8
+          usable_size = is_ninth_byte ? 8 : 7
+
+          shifted = value << usable_size
+          shifted + usable_value(usable_size, byte)
+        end
+
+        Conversions.twos_complement(value) 
+      end
+
+      def find_usable_bytes(stream)
+        usable = []
 
         (1..9).each do |counter|
-          byte = stream.readbyte()
+          byte = stream.readbyte
+          usable << byte
 
-          is_ninth_byte = (counter == 9)
-
-          usable_size = is_ninth_byte ? 8 : 7
-          value = value << usable_size
-          value += usable_value(usable_size, byte)
-
-          if(is_ninth_byte || starts_with_zero?(byte))
-            return {
-                length: counter,
-                value: Conversions.twos_complement(value)
-            }
-          end
+          is_ninth_byte = counter == 9
+          break if is_ninth_byte || starts_with_zero?(byte)
         end
+
+        usable
       end
+
+      IS_FIRST_BIT_ZERO_MASK = 0b10000000
+      LAST_SEVEN_BITS_MASK    = 0b01111111
 
       def starts_with_zero?(byte)
         byte & IS_FIRST_BIT_ZERO_MASK == 0
