@@ -27,8 +27,7 @@ module PureSQLite
 
       def compute_value(usable_bytes)
         value = usable_bytes.each_with_index.inject(0) do |value, (byte, index)|
-          is_ninth_byte = index == 8
-          usable_size = is_ninth_byte ? 8 : 7
+          usable_size = ninth?(index) ? 8 : 7
 
           shifted = value << usable_size
           shifted + usable_value(usable_size, byte)
@@ -40,15 +39,18 @@ module PureSQLite
       def find_usable_bytes(stream)
         usable = []
 
-        (1..9).each do |counter|
+        (0..8).each do |counter|
           byte = stream.readbyte
           usable << byte
 
-          is_ninth_byte = counter == 9
-          break if is_ninth_byte || starts_with_zero?(byte)
+          break if ninth?(counter) || starts_with_zero?(byte)
         end
 
         usable
+      end
+
+      def ninth?(index)
+        index == 8
       end
 
       IS_FIRST_BIT_ZERO_MASK = 0b10000000
