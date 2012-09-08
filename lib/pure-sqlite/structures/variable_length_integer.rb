@@ -52,16 +52,16 @@ module PureSQLite
       IS_FIRST_BIT_ZERO_MASK = 0b10000000
       LAST_SEVEN_BITS_MASK    = 0b01111111
 
-      def starts_with_zero?(byte)
-        byte & IS_FIRST_BIT_ZERO_MASK == 0
-      end
-
       def usable_value(usable_size, byte)
         usable_size == 7 ? byte & LAST_SEVEN_BITS_MASK : byte
       end
 
       def ninth?(index)
         index == 8
+      end
+
+      def starts_with_zero?(byte)
+        byte & IS_FIRST_BIT_ZERO_MASK == 0
       end
 
     end
