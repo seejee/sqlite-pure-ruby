@@ -40,7 +40,11 @@ module PureSQLite
     end
 
     def each_record
-      cells.each {|c| yield c.database_record }
+      records.each {|r| yield r }
+    end
+
+    def records
+      cells.map {|c| c.database_record }
     end
 
     private

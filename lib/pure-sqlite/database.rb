@@ -13,8 +13,12 @@ module PureSQLite
     end
 
     def tables
+      schema_entries = @schema_page.records.map { |r| Structures::SchemaEntry.new(r) }
+      schema_entries.map { |schema| schema.name }
+    end
+
+    def columns(table)
       tables = []
-      @schema_page.each_record {|record| tables << record[1].value }
       tables
     end
 
