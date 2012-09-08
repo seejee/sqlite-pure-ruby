@@ -12,7 +12,7 @@ describe Page do
     its(:first_available)       { should == 0 }
     its(:header_length)         { should == 8 }
     its(:type)                  { should == :table_leaf_node }
-    its(:content_start)         { should == 1873 }
+    its(:content_start)         { should == 849 }
     its(:num_cells)             { should == 2 }
     its(:fragmented_free_bytes) { should == 0 }
 
@@ -41,7 +41,7 @@ describe Page do
 
     its(:first_available) { should == 0 }
     its(:type)            { should == :table_leaf_node }
-    its(:content_start)   { should == 2025 }
+    its(:content_start)   { should == 1024 }
 
     after do
       io.close
