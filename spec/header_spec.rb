@@ -7,7 +7,6 @@ describe Header do
 
   its(:length)                    { should == 100 }
   its(:well_known_string)         { should == "SQLite format 3" }
-  its(:page_size)                 { should == 1024 }
   its(:write_version)             { should == 1 }
   its(:read_version)              { should == 1 }
   its(:page_unused_bytes)         { should == 0 }
@@ -26,6 +25,7 @@ describe Header do
   its(:user_cookie)               { should == 0 }
   its(:incremental_vacuum_mode)   { should == 0 }
   its(:version_valid_for)         { should == 2 }
-  its(:sqlite_version_number)     { should == 3007010 }
 
+  #its(:sqlite_version_number)     { should == 3007010 }
+  #its(:page_size)                 { should == 1024 }
 end
